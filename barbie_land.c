@@ -1,4 +1,4 @@
-#include <curses.h>
+#include <ncurses.h>
 #include <stdlib.h>
 
 
@@ -142,7 +142,7 @@ int main()
 			if ((perso.x==5) && (perso.y==5) && (perso.level==niveau)){ perso.x=6;perso.y=6;perso.level=win;Afficher_Perso(perso.x,perso.y,perso.level);}
 			if ((perso.x==5) && (perso.y==6) && (perso.level==win)){ perso.x=6;perso.y=5;perso.level=niveau;Afficher_Perso(perso.x,perso.y,perso.level);Vie+=1;}
 			if (Vie == 0) {break;}
-}
+		}
 	}
 
     	endwin();
