@@ -8,14 +8,19 @@ typedef struct param_perso{ int x,y;WINDOW *level;WIN levelinfo;}PERSO;
 
 
 
-void Creation_menu(){
 
+void Afficher_menu(){
 	WINDOW *menu = newwin(LINES,COLS,0,0);
-	box(menu,0,0);
+        refresh();
 
-	wrefresh(menu);
+        box(menu,0,0);
+        mvwprintw(menu,LINES/2,(COLS/2)-23,"Appuyez sur une touche pour commencer à jouer");
+        wrefresh(menu);
 }
 
+
+void Creation_niveau(){
+}
 
 
 void Creation_Salle(){
@@ -29,7 +34,6 @@ void Creation_liens(){
 
 
 void Init_Couleur(){
-
 	init_pair(1, COLOR_WHITE,COLOR_WHITE);
 	init_pair(2, COLOR_GREEN,COLOR_GREEN);
 	init_pair(3, COLOR_MAGENTA,COLOR_MAGENTA);
@@ -39,7 +43,6 @@ void Init_Couleur(){
 
 
 void Afficher_Perso(int x,int y,WINDOW *win){
-
 	wattron(win,COLOR_PAIR(2));
 	mvwprintw(win,y,x,"@");
 	wattroff(win,COLOR_PAIR(2));
@@ -47,8 +50,9 @@ void Afficher_Perso(int x,int y,WINDOW *win){
 	wrefresh(win);
 }
 
-void Afficher_Vie(int Vie){
 
+
+void Afficher_Vie(int Vie){
 	WINDOW *vie = newwin(3,30,LINES-3,0);
 	box(vie,0,0);
 
@@ -67,7 +71,6 @@ void Afficher_Vie(int Vie){
 
 
 void Afficher_Portail(int x,int y,WINDOW *win){
-
 	wattron(win, COLOR_PAIR(3));
 	mvwprintw(win,y,x,"p");
 	wattroff(win, COLOR_PAIR(3));
@@ -87,12 +90,7 @@ int main()
 	curs_set(FALSE);
 	keypad(stdscr, TRUE);
 
-	WINDOW *menu = newwin(LINES,COLS,0,0);
-	refresh();
-
-	box(menu,0,0);
-	mvwprintw(menu,LINES/2,(COLS/2)-23,"Appuyez sur une touche pour commencer à jouer");
-	wrefresh(menu);
+	Afficher_menu();
 
 	int ch;
 	int Vie = 3;
@@ -103,8 +101,8 @@ int main()
 
 	if (ch =getch())
 	{
-		wclear(menu);
-		wrefresh(menu);
+		clear();
+		refresh();
 
 		WINDOW *niveau = newwin(Niveau.h,Niveau.w,Niveau.starty,Niveau.startx);
 		WINDOW *win = newwin(Win.h,Win.w,Win.starty,Win.startx);
