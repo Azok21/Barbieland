@@ -1,8 +1,8 @@
 #include <ncurses.h>
 #include <stdlib.h>
+#include <time.h>
 
-
-typedef struct param_win{ int h,w,startx,starty;}WIN;
+typedef struct param_win{int h,w,startx,starty;}WIN;
 
 typedef struct param_perso{ int x,y;WINDOW *level;WIN levelinfo;}PERSO;
 
@@ -19,11 +19,47 @@ void Afficher_menu(){
 }
 
 
-void Creation_niveau(){
+
+WINDOW *Creation_salle(int h,int w,int starty,int startx){
+        WINDOW *salle = newwin(h,w,starty,startx);
+        refresh();
+
+        box(salle,0,0);
+        wrefresh(salle);
+
+        return salle;
 }
 
 
-void Creation_Salle(){
+
+void Creation_niveau(){
+	srand(time(NULL));
+
+	WINDOW *salle_trone = Creation_salle(LINES/2,COLS/2,0,0);
+
+	for (int i = 2;i<5;i++){
+		int h=0,w=0,startx=0,starty=0;
+		switch(i){
+			case 2: startx=(COLS/2)+(rand()%(COLS/8));
+				starty=rand()%(LINES/8);
+				h=(rand()%((LINES/8)-starty))+(3*LINES/8);
+				w=(rand()%((COLS/8)-(startx-(COLS/2))))+(3*COLS/8);
+				WINDOW *salle2 = Creation_salle(h,w,starty,startx);
+				break;
+			case 3: startx=rand()%(COLS/8);
+                                starty=(LINES/2)+(rand()%(LINES/8));
+                                h=(rand()%((LINES/8)-(starty-(LINES/2))))+(3*LINES/8);
+                                w=(rand()%((COLS/8)-startx))+(3*COLS/8);
+                                WINDOW *salle3 = Creation_salle(h,w,starty,startx);
+                                break;
+			case 4: startx=(COLS/2)+(rand()%(COLS/8));
+                                starty=(LINES/2)+(rand()%(LINES/8));
+                                h=(rand()%((LINES/8)-(starty-(LINES/2))))+(3*LINES/8);
+                                w=(rand()%((COLS/8)-(startx-(COLS/2))))+(3*COLS/8);
+                                WINDOW *salle4 = Creation_salle(h,w,starty,startx);
+                                break;
+		}
+	}
 }
 
 
@@ -104,42 +140,42 @@ int main()
 		clear();
 		refresh();
 
-		WINDOW *niveau = newwin(Niveau.h,Niveau.w,Niveau.starty,Niveau.startx);
-		WINDOW *win = newwin(Win.h,Win.w,Win.starty,Win.startx);
-		box(niveau,0,0);
-		box(win,0,0);
+		Creation_niveau();
 
-		perso.level = niveau;
-		perso.levelinfo = Niveau;
+		//WINDOW *niveau = Creation_salle(Niveau.h,Niveau.w,Niveau.starty,Niveau.startx);
+		//WINDOW *win = Creation_salle(Win.h,Win.w,Win.starty,Win.startx);
 
-		Afficher_Perso(perso.x,perso.y,perso.level);
-		Afficher_Portail(5,5,niveau);
-                Afficher_Portail(5,6,win);
-		Afficher_Vie(Vie);
+		//perso.level = niveau;
+		//perso.levelinfo = Niveau;
+
+		//Afficher_Perso(perso.x,perso.y,perso.level);
+		//Afficher_Portail(5,5,niveau);
+                //Afficher_Portail(5,6,win);
+		//Afficher_Vie(Vie);
 
 		while((ch=getch()) != KEY_F(1))
 		{
-			werase(niveau);
-			werase(win);
+			//werase(niveau);
+			//werase(win);
 
-			box(niveau,0,0);
-			box(win,0,0);
+			//box(niveau,0,0);
+			//box(win,0,0);
 
-			Afficher_Portail(5,5,niveau);
-                        Afficher_Portail(5,6,win);
-			Afficher_Vie(Vie);
+			//Afficher_Portail(5,5,niveau);
+                        //Afficher_Portail(5,6,win);
+			//Afficher_Vie(Vie);
 
-			switch(ch)
-			{
-				case KEY_UP: if(perso.y>perso.levelinfo.starty+1) {--perso.y;Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
-				case KEY_DOWN: if(perso.y<(perso.levelinfo.h)-2) {++perso.y,Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
-				case KEY_RIGHT: if(perso.x<(perso.levelinfo.w)-3) {++perso.x;Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
-				case KEY_LEFT: if(perso.x>perso.levelinfo.startx+1) {--perso.x;Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
-			}
+			//switch(ch)
+			//{
+			//	case KEY_UP: if(perso.y>perso.levelinfo.starty+1) {--perso.y;Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
+			//	case KEY_DOWN: if(perso.y<(perso.levelinfo.h)-2) {++perso.y,Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
+			//	case KEY_RIGHT: if(perso.x<(perso.levelinfo.w)-3) {++perso.x;Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
+			//	case KEY_LEFT: if(perso.x>perso.levelinfo.startx+1) {--perso.x;Afficher_Perso(perso.x,perso.y,perso.level);}else{Afficher_Perso(perso.x,perso.y,perso.level);} break;
+			//}
 
-			if ((perso.x==5) && (perso.y==5) && (perso.level==niveau)){ perso.x=6;perso.y=6;perso.level=win;Afficher_Perso(perso.x,perso.y,perso.level);}
-			if ((perso.x==5) && (perso.y==6) && (perso.level==win)){ perso.x=6;perso.y=5;perso.level=niveau;Afficher_Perso(perso.x,perso.y,perso.level);Vie+=1;}
-			if (Vie == 0) {break;}
+			//if ((perso.x==5) && (perso.y==5) && (perso.level==niveau)){ perso.x=6;perso.y=6;perso.level=win;Afficher_Perso(perso.x,perso.y,perso.level);}
+			//if ((perso.x==5) && (perso.y==6) && (perso.level==win)){ perso.x=6;perso.y=5;perso.level=niveau;Afficher_Perso(perso.x,perso.y,perso.level);Vie+=1;}
+			//if (Vie == 0) {break;}
 		}
 	}
 
