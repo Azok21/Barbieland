@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef struct param_win{int h,w,startx,starty;}WIN;
+typedef struct param_win{int h,w,startx,starty;WINDOW *salle;}WIN;
 
 typedef struct param_perso{ int x,y;WINDOW *level;WIN levelinfo;}PERSO;
 
@@ -32,34 +32,41 @@ WINDOW *Creation_salle(int h,int w,int starty,int startx){
 
 
 
-void Creation_niveau(){
+WIN Creation_niveau(){
 	srand(time(NULL));
 
-	WINDOW *salle_trone = Creation_salle(LINES/2,COLS/2,0,0);
+	WIN Salles[4];
+
+	Salles[0].startx=0;
+        Salles[0].starty=0;
+        Salles[0].h=LINES/2;
+        Salles[0].w=COLS/2;
+        Salles[0].salle = Creation_salle(Salles[0].h,Salles[0].w,Salles[0].starty,Salles[0].startx);
 
 	for (int i = 2;i<5;i++){
 		int h=0,w=0,startx=0,starty=0;
 		switch(i){
-			case 2: startx=(COLS/2)+(rand()%(COLS/8));
-				starty=rand()%(LINES/8);
-				h=(rand()%((LINES/8)-starty))+(3*LINES/8);
-				w=(rand()%((COLS/8)-(startx-(COLS/2))))+(3*COLS/8);
-				WINDOW *salle2 = Creation_salle(h,w,starty,startx);
+			case 2: Salles[1].startx=(COLS/2)+(rand()%(COLS/8));
+				Salles[1].starty=rand()%(LINES/8);
+				Salles[1].h=(rand()%((LINES/8)-Salles[1].starty))+(3*LINES/8);
+				Salles[1].w=(rand()%((COLS/8)-(Salles[1].startx-(COLS/2))))+(3*COLS/8);
+				Salles[1].salle = Creation_salle(Salles[1].h,Salles[1].w,Salles[1].starty,Salles[1].startx);
 				break;
-			case 3: startx=rand()%(COLS/8);
-                                starty=(LINES/2)+(rand()%(LINES/8));
-                                h=(rand()%((LINES/8)-(starty-(LINES/2))))+(3*LINES/8);
-                                w=(rand()%((COLS/8)-startx))+(3*COLS/8);
-                                WINDOW *salle3 = Creation_salle(h,w,starty,startx);
+			case 3: Salles[2].startx=rand()%(COLS/8);
+                                Salles[2].starty=(LINES/2)+(rand()%(LINES/8));
+                                Salles[2].h=(rand()%((LINES/8)-(Salles[2].starty-(LINES/2))))+(3*LINES/8);
+                                Salles[2].w=(rand()%((COLS/8)-Salles[2].startx))+(3*COLS/8);
+                                Salles[2].salle = Creation_salle(Salles[2].h,Salles[2].w,Salles[2].starty,Salles[2].startx);
                                 break;
-			case 4: startx=(COLS/2)+(rand()%(COLS/8));
-                                starty=(LINES/2)+(rand()%(LINES/8));
-                                h=(rand()%((LINES/8)-(starty-(LINES/2))))+(3*LINES/8);
-                                w=(rand()%((COLS/8)-(startx-(COLS/2))))+(3*COLS/8);
-                                WINDOW *salle4 = Creation_salle(h,w,starty,startx);
+			case 4: Salles[3].startx=(COLS/2)+(rand()%(COLS/8));
+                                Salles[3].starty=(LINES/2)+(rand()%(LINES/8));
+                                Salles[3].h=(rand()%((LINES/8)-(Salles[3].starty-(LINES/2))))+(3*LINES/8);
+                                Salles[3].w=(rand()%((COLS/8)-(Salles[3].startx-(COLS/2))))+(3*COLS/8);
+                                Salles[3].salle = Creation_salle(Salles[3].h,Salles[3].w,Salles[3].starty,Salles[3].startx);
                                 break;
 		}
 	}
+	return *Salles;
 }
 
 
@@ -67,6 +74,11 @@ void Creation_niveau(){
 void Creation_liens(){
 }
 
+
+void Actualiser_niveau(WIN niveau){
+	for (i=0; i < sizeof(niveau)+1;i++){
+
+}
 
 
 void Init_Couleur(){
@@ -132,32 +144,24 @@ int main()
 	int Vie = 3;
 
 	PERSO perso={10,10};
-	WIN Niveau={LINES/2,COLS/2,0,0};
-	WIN Win={LINES/2,COLS/2,COLS/2,LINES/2};
 
 	if (ch =getch())
 	{
 		clear();
 		refresh();
 
-		Creation_niveau();
+		WIN Niveau = Creation_niveau();
 
-		//WINDOW *niveau = Creation_salle(Niveau.h,Niveau.w,Niveau.starty,Niveau.startx);
-		//WINDOW *win = Creation_salle(Win.h,Win.w,Win.starty,Win.startx);
+		perso.level = Niveau[0].salle;
+		perso.levelinfo = Niveau[0];
 
-		//perso.level = niveau;
-		//perso.levelinfo = Niveau;
-
-		//Afficher_Perso(perso.x,perso.y,perso.level);
+		Afficher_Perso(perso.x,perso.y,perso.level);
 		//Afficher_Portail(5,5,niveau);
                 //Afficher_Portail(5,6,win);
 		//Afficher_Vie(Vie);
 
 		while((ch=getch()) != KEY_F(1))
 		{
-			//werase(niveau);
-			//werase(win);
-
 			//box(niveau,0,0);
 			//box(win,0,0);
 
