@@ -54,16 +54,37 @@ WIN * Creation_niveau(){
 
 
 
+void Afficher_Portail(int x,int y,WINDOW *win){
+        wattron(win, COLOR_PAIR(3));
+        mvwprintw(win,y,x,"p");
+        wattroff(win, COLOR_PAIR(3));
+
+        wrefresh(win);
+}
+
+void Afficher_monstre(int x,int y,WINDOW *win){
+        wattron(win,COLOR_PAIR(4));
+        mvwprintw(win,x,y,"M");
+        wattroff(win,COLOR_PAIR(4));
+        wrefresh(win);
+}
+
+
+
 void Actualiser_salle(PERSO perso){
         WINDOW *salle = perso.level;
         werase(salle);
         wrefresh(salle);
         box(salle,0,0);
         Afficher_Perso(perso.x,perso.y,salle);
+	Afficher_Portail(5,6,salle);
 }
 
-//void Actualiser_salle(WINDOW *salle){
-//	werase(salle);
-//	wrefresh(salle)
-//	salle = crea
-//}
+void Actualiser_salle_monstre(MONSTRE monstre){
+	WINDOW *salle = monstre.salle.salle;
+	werase(salle);
+	wrefresh(salle);
+	box(salle,0,0);
+	Afficher_monstre(monstre.x,monstre.y,salle);
+	Afficher_Portail(5,6,salle);
+}
