@@ -69,15 +69,31 @@ void Afficher_monstre(int x,int y,WINDOW *win){
         wrefresh(win);
 }
 
+void Afficher_Cailloux(int h,int w,WINDOW *salle){
+	srand(time(NULL));
+        int i = rand() % 5;
+        for (int j = 0; j<i; j++){
+        	int y = rand() % h;
+                int x = rand() % w;
+                wattron(salle,COLOR_PAIR(1));
+                mvwprintw(salle,x,y,"CC");
+                wattroff(salle,COLOR_PAIR(1));
+        }
+}
+
 
 
 void Actualiser_salle(PERSO perso){
         WINDOW *salle = perso.level;
+	PORTAIL portail1 = perso.levelinfo.portail1;
+	PORTAIL portail2 = perso.levelinfo.portail2;
         werase(salle);
         wrefresh(salle);
         box(salle,0,0);
         Afficher_Perso(perso.x,perso.y,salle);
-	Afficher_Portail(5,6,salle);
+	Afficher_Portail(portail1.x,portail1.y,portail1.salle);
+	Afficher_Portail(portail2.x,portail2.y,portail2.salle);
+	Afficher_Cailloux(perso.levelinfo.h,perso.levelinfo.w,salle);
 }
 
 void Actualiser_salle_monstre(MONSTRE monstre){

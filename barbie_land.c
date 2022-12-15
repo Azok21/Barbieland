@@ -4,6 +4,7 @@
 #include "structure.h"
 #include "niveau.h"
 #include "perso.h"
+#include "menu.h"
 
 
 void Init_Couleur(){
@@ -15,75 +16,12 @@ void Init_Couleur(){
         init_pair(6, COLOR_MAGENTA, COLOR_BLACK);
 }
 
-WINDOW *Afficher_menu(){
-	WINDOW *menu = newwin(LINES,COLS,0,0);
-        refresh();
-
-        box(menu,0,0);
-
-	mvwprintw(menu,LINES/2,(COLS/2)-11,"Appuyez sur une touche");
-        wrefresh(menu);
-
-	return menu;
-}
-
-void Actualiser_menu(WINDOW *menu){
-	werase(menu);
-	wrefresh(menu);
-	box(menu,0,0);
-
-	wattron(menu,COLOR_PAIR(6));
-	mvwprintw(menu,5,COLS/2-54, " BBBBBB     AAAAAA   RRRRRRR   BBBBBB    IIIIIIII  EEEEEEEE           LL         AAAAAA   NN    NN  DDDDDD   ");
-        mvwprintw(menu,6,COLS/2-54, " BB   BB   AA    AA  RR    RR  BB   BB      II     EE                 LL        AA    AA  NNN   NN  DD   DD  ");
-        mvwprintw(menu,7,COLS/2-54, " BB   BB   AA    AA  RR    RR  BB   BB      II     EE                 LL        AA    AA  NNNN  NN  DD    DD ");
-        mvwprintw(menu,8,COLS/2-54, " BBBBBBB   AAAAAAAA  RRRRRRR   BBBBBBB      II     EEEEE     HHHHHH   LL        AAAAAAAA  NN NN NN  DD    DD ");
-        mvwprintw(menu,9,COLS/2-54, " BB    BB  AA    AA  RRRRR     BB    BB     II     EE                 LL        AA    AA  NN  NNNN  DD    DD ");
-        mvwprintw(menu,10,COLS/2-54," BB    BB  AA    AA  RR  RRR   BB    BB     II     EE                 LL        AA    AA  NN   NNN  DD   DD  ");
-        mvwprintw(menu,11,COLS/2-54," BBBBBBB   AA    AA  RR    RR  BBBBBBB   IIIIIIII  EEEEEEEE           LLLLLLLL  AA    AA  NN    NN  DDDDDD   ");
-	wattroff(menu,COLOR_PAIR(6));
-
-	mvwprintw(menu,LINES/2,(COLS/2)-18,    "Appuyez sur F2 pour commencer à jouer");
-	mvwprintw(menu,LINES/2+2,(COLS/2)-20,"Appuyez sur F1 pour lire les instructions");
-	mvwprintw(menu,LINES-2,1,"Appuyez sur BACKSPACE pour sortir");
-	wrefresh(menu);
-}
-
-void Actualiser_info(WINDOW *menu,int ch){
-	while(ch != KEY_BACKSPACE){
-		werase(menu);
-		wrefresh(menu);
-		box(menu,0,0);
-
-		wattron(menu, COLOR_PAIR(2));
-		mvwprintw(menu,15,COLS/4,"P");
-		wattroff(menu, COLOR_PAIR(2));
-		mvwprintw(menu,15,COLS/4+2,"==> Votre Personnage");
-		wrefresh(menu);
-		ch = getch();
-	}
-}
-
-
-void Afficher_Cailloux(int x,int y,WINDOW *win){
-        wattron(win,COLOR_PAIR(5));
-        mvwprintw(win,x,y,"°°");
-        wattroff(win,COLOR_PAIR(5));
-	wrefresh(win);
-}
-
 void Bouger_monstre(MONSTRE monstre){
 	srand(time(NULL));
 	int oldAction;
 	int action = 1;
-	switch(action){
-		case 0: if(monstre.x>1 && oldAction!=2){--monstre.x;oldAction=0;Actualiser_salle_monstre(monstre);} break;
-		case 1: if(monstre.y<monstre.salle.h-2 && oldAction!=3){++monstre.y;oldAction=1;Actualiser_salle_monstre(monstre);} break;
-		case 2: if(monstre.x<monstre.salle.w-3 && oldAction!=1){++monstre.x;oldAction=2;Actualiser_salle_monstre(monstre);} break;
-		case 3: if(monstre.y>1 && oldAction!=1){--monstre.y;oldAction=3;Actualiser_salle_monstre(monstre);} break;
-		case 4: Actualiser_salle_monstre(monstre); break;
-	}
+	//if
 }
-
 
 
 void jeu(int ch)
@@ -95,47 +33,88 @@ void jeu(int ch)
 
 	int Vie = 3;
 
-	PERSO perso={10,10};
+	PERSO perso={10,10,Niveau[0].salle,Niveau[0]};
         MONSTRE monstre_salle1={20,10,Niveau[0]};
-
-        perso.level = Niveau[1].salle;
-        perso.levelinfo = Niveau[1];
 
         Afficher_Perso(perso.x,perso.y,perso.level);
 	Afficher_Vie(Vie);
 
-        Afficher_Portail(5,5,Niveau[0].salle);
-        Afficher_Portail(5,6,Niveau[1].salle);
+	PORTAIL portail1_1 = {3*Niveau[0].w/4,Niveau[0].h-2,Niveau[0].salle};
+	PORTAIL portail1_2 = {Niveau[0].w-2,Niveau[0].h/2,Niveau[0].salle};
 
-	Afficher_Cailloux(10,10,Niveau[0].salle);
-        Afficher_monstre(monstre_salle1.x,monstre_salle1.y,monstre_salle1.salle.salle);
+	PORTAIL portail2_1 = {1,Niveau[1].h/2,Niveau[1].salle};
+	PORTAIL portail2_2 = {Niveau[1].w/4,Niveau[1].h-2,Niveau[1].salle};
 
-        while(ch != KEY_BACKSPACE)
+	PORTAIL portail3_1 = {3*Niveau[2].w/4,1,Niveau[2].salle};
+        PORTAIL portail3_2 = {Niveau[2].w-2,Niveau[2].h/2,Niveau[2].salle};
+
+	Niveau[0].portail1 = portail1_1;
+	Niveau[0].portail2 = portail1_2;
+
+	Niveau[1].portail1 = portail2_1;
+        Niveau[1].portail2 = portail2_2;
+
+	Niveau[2].portail1 = portail3_1;
+	Niveau[2].portail2 = portail3_2;
+
+	Afficher_Portail(portail1_1.x,portail1_1.y,portail1_1.salle);
+        Afficher_Portail(portail1_2.x,portail1_2.y,portail1_2.salle);
+
+	//Afficher_Cailloux(Niveau);
+        //Afficher_monstre(monstre_salle1.x,monstre_salle1.y,monstre_salle1.salle.salle);
+
+        while((ch != KEY_BACKSPACE) && (Vie != 0))
         {
-        	Afficher_Portail(5,5,Niveau[0].salle);
-                Afficher_Portail(5,6,Niveau[1].salle);
-                Afficher_Cailloux(10,10,Niveau[0].salle);
-                Afficher_monstre(monstre_salle1.x,monstre_salle1.y,monstre_salle1.salle.salle);
+        	Afficher_Portail(portail1_1.x,portail1_1.y,portail1_1.salle);
+                Afficher_Portail(portail1_2.x,portail1_2.y,portail1_2.salle);
+		//Afficher_Cailloux(Niveau);
+                //Afficher_monstre(monstre_salle1.x,monstre_salle1.y,monstre_salle1.salle.salle);
                 Afficher_Vie(Vie);
 
-                Bouger_monstre(monstre_salle1);
+                //Bouger_monstre(monstre_salle1);
 
 		ch=getch();
                 switch(ch)
                 {
                 	case KEY_UP: if(perso.y>1) {--perso.y;Actualiser_salle(perso);}else{Actualiser_salle(perso);} break;
                         case KEY_DOWN: if(perso.y<perso.levelinfo.h-2) {++perso.y,Actualiser_salle(perso);}else{Actualiser_salle(perso);} break;
-                        case KEY_RIGHT: if(perso.x<perso.levelinfo.w-3) {++perso.x;Actualiser_salle(perso);}else{Actualiser_salle(perso);} break;
+                        case KEY_RIGHT: if(perso.x<perso.levelinfo.w-2) {++perso.x;Actualiser_salle(perso);}else{Actualiser_salle(perso);} break;
                         case KEY_LEFT: if(perso.x>1) {--perso.x;Actualiser_salle(perso);}else{Actualiser_salle(perso);} break;
                 }
 
-                //if ((perso.x==2) && (perso.level==Niveau[1].salle)){werase(Niveau[1].salle);wrefresh(Niveau[1].salle);Niveau[1].salle=Creation_salle(Niveau[1].h,Niveau[1].w,Niveau
-                //                                                      perso.level=Niveau[0].salle;perso.levelinfo=Niveau[0];perso.x=perso.levelinfo.w-5;Actualiser_salle(perso);}
+                if ((perso.x==portail1_1.x) && (perso.y==portail1_1.y)){
+			Vie-=1;
+			perso.x = portail3_1.x;
+			perso.y = portail3_1.y+1;
+			perso.level = Niveau[2].salle;
+			perso.levelinfo = Niveau[2];
+			Actualiser_salle(perso);
+		}
+		if ((perso.x==portail1_2.x) && (perso.y==portail1_2.y)){
+                        perso.x = portail2_1.x+1;
+                        perso.y = portail2_1.y;
+                        perso.level = Niveau[1].salle;
+                        perso.levelinfo = Niveau[1];
+                        Actualiser_salle(perso);
+                }
+		if ((perso.x==portail3_1.x) && (perso.y==portail3_1.y)){
+                        perso.x = portail1_1.x;
+                        perso.y = portail1_1.y-1;
+                        perso.level = Niveau[0].salle;
+                        perso.levelinfo = Niveau[0];
+                        Actualiser_salle(perso);
+                }
+		if ((perso.x==portail2_1.x) && (perso.y==portail2_1.y)){
+                        perso.x = portail1_2.x-1;
+                        perso.y = portail1_2.y;
+                        perso.level = Niveau[0].salle;
+                        perso.levelinfo = Niveau[0];
+                        Actualiser_salle(perso);
+                }
                 //if ((perso.x==5) && (perso.y==6) && (perso.level==win)){ perso.x=6;perso.y=5;perso.level=niveau;Afficher_Perso(perso.x,perso.y,perso.level);Vie+=1;}
                 //iMONSTRE monstre_salle1={20,10,Niveau[0].salle};f (Vie == 0) {break;}
 	}
 }
-
 
 
 int main()
@@ -157,7 +136,7 @@ int main()
 		Actualiser_menu(menu);
 		ch = getch();
 		switch(ch){
-			case KEY_F(1): Actualiser_info(menu,ch); break; 
+			case KEY_F(1): Actualiser_menu_info(menu,ch); break;
 			case KEY_F(2): jeu(ch);break;
 		}
 	}
